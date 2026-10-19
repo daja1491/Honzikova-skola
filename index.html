@@ -2,19 +2,45 @@
 <html lang="cs">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#183b70">
-<title>Honzíkova škola</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#173b73">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Honzíkova škola – výběr cvičení</title>
 <style>
-:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#1d2b42;background:#f2f6fd}*{box-sizing:border-box}body{margin:0}header{background:#183b70;color:white;padding:38px 22px;text-align:center}h1{font-size:clamp(2rem,6vw,3rem);margin:.1em 0}.subtitle{opacity:.9;font-size:1.1rem}main{max-width:900px;margin:0 auto;padding:26px 18px 60px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}.card{background:white;border-radius:18px;padding:23px;box-shadow:0 5px 18px #122c5712}h2{margin:0 0 9px}p{line-height:1.55}.link{display:inline-block;background:#1764bb;color:white;text-decoration:none;font-weight:700;border-radius:12px;padding:15px 18px;margin-top:6px;min-height:48px}.link:focus-visible{outline:3px solid #ffad34;outline-offset:3px}.muted{color:#57657a}.coming{background:#e9edf3;color:#465267}.tag{font-size:.8rem;font-weight:700;color:#1a6288;text-transform:uppercase;letter-spacing:.05em}footer{text-align:center;color:#5b6980;padding:20px}
+:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#172b45;background:#f1f5fc}*{box-sizing:border-box}body{margin:0}header{background:linear-gradient(120deg,#173b73,#3170cc);color:#fff;padding:34px 18px;text-align:center}header h1{margin:6px 0;font-size:clamp(28px,5vw,43px)}header p{margin:6px 0 0;color:#e9f1ff}main{max-width:980px;margin:auto;padding:24px 16px 56px}.top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:19px}.top h2{margin:0}.refresh{font:inherit;border:1px solid #b6c9e6;background:white;color:#184877;border-radius:12px;padding:11px 15px;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}.card{background:white;border-radius:19px;box-shadow:0 4px 18px #1e42731c;padding:23px}.card h3{margin:0 0 7px;font-size:22px}.card p{color:#52637c;line-height:1.5;margin:0 0 15px}.count{font-size:13px;color:#566c85;font-weight:650}.tests{list-style:none;margin:0;padding:0;display:grid;gap:9px}.tests a{display:flex;gap:12px;align-items:center;justify-content:space-between;border:1px solid #d6e3f4;padding:14px 12px;border-radius:12px;text-decoration:none;color:#1356aa;font-weight:700;min-height:54px}.tests a:hover,.tests a:focus-visible{background:#eaf2ff;outline:2px solid #85abed}.empty{color:#768399;font-style:italic;font-size:14px}#error{background:#fff4e5;border:1px solid #efcc8d;padding:15px;border-radius:14px;margin:0 0 20px}footer{text-align:center;color:#60718a;padding:24px 16px;font-size:13px}
 </style>
 </head>
 <body>
-<header><div style="font-size:3rem" aria-hidden="true">🎒</div><h1>Honzíkova škola</h1><div class="subtitle">Vyber si předmět a pojď procvičovat!</div></header>
-<main><div class="grid">
-<section class="card"><div class="tag">Český jazyk</div><h2>📚 Čeština</h2><p>Procvičování pravopisu a gramatiky.</p><a class="link" href="honzikova_skola.html">Shoda podmětu s přísudkem →</a></section>
-<section class="card"><div class="tag">Připravujeme</div><h2>🔢 Matematika</h2><p class="muted">Rovnice, násobení, dělení a pořadí početních operací.</p><span class="link coming">Brzy přibude</span></section>
-<section class="card"><div class="tag">Připravujeme</div><h2>🌍 Angličtina</h2><p class="muted">Slovíčka a jednoduché věty.</p><span class="link coming">Brzy přibude</span></section>
-<section class="card"><div class="tag">Připravujeme</div><h2>🌱 Přírodověda</h2><p class="muted">Rostliny, zvířata a svět kolem nás.</p><span class="link coming">Brzy přibude</span></section>
-</div></main><footer>Honzíkova škola • učíme se krok za krokem</footer>
-</body></html>
+<header><div style="font-size:40px" aria-hidden="true">🎒</div><h1>Honzíkova škola</h1><p>Vyber si předmět a procvičuj!</p></header>
+<main>
+<div class="top"><h2>📚 Předměty a cvičení</h2><button id="refresh" class="refresh" type="button">↻ Aktualizovat seznam</button></div>
+<p id="error" hidden role="alert"></p>
+<div id="subjects" class="grid" aria-live="polite"><p>Načítám cvičení…</p></div>
+</main>
+<footer>Honzíkova škola • Pro iPad a počítač • Bez přihlášení</footer>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+// Upravují se pouze data v cviceni.json. Odkazy jsou relativní k index.html.
+function validPath(path){return typeof path==='string' && path.length>0 && !path.startsWith('/') && !path.startsWith('//') && !path.includes('\\') && !path.includes('..') && !path.includes(':') && !path.includes('?') && !path.includes('#') && /^[a-zA-Z0-9_./-]+\.html$/.test(path)}
+function make(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}
+async function load(){const holder=$('subjects'),error=$('error');error.hidden=true;holder.replaceChildren(make('p','','Načítám cvičení…'));
+ try{
+  const response=await fetch('cviceni.json?ver='+Date.now(),{cache:'no-store'});if(!response.ok)throw Error('Soubor cviceni.json nebyl nalezen ('+response.status+').');
+  const data=await response.json();if(!Array.isArray(data.predmety))throw Error('Chybí pole "predmety".');
+  holder.replaceChildren();
+  for(const subject of data.predmety){if(typeof subject.nazev!=='string'||!Array.isArray(subject.cviceni))continue;
+   const card=make('section','card');const title=make('h3','',((subject.ikona||'📘')+' '+subject.nazev));card.append(title);
+   if(subject.popis)card.append(make('p','',subject.popis));
+   const count=subject.cviceni.filter(x=>validPath(x.soubor)&&typeof x.nazev==='string').length;
+   card.append(make('p','count',count===0?'Zatím žádné cvičení':count+' '+(count===1?'cvičení':count>=2&&count<=4?'cvičení':'cvičení')));
+   if(count){const ul=make('ul','tests');for(const test of subject.cviceni){if(!validPath(test.soubor)||typeof test.nazev!=='string')continue;const li=make('li');const a=make('a','',test.nazev+' →');a.href=test.soubor;li.append(a);ul.append(li)}card.append(ul)}else card.append(make('div','empty','Nová cvičení připravujeme.'));
+   holder.append(card)
+  }
+  if(!holder.children.length)holder.append(make('p','','Zatím nejsou dostupné žádné předměty.'));
+ }catch(err){holder.replaceChildren();error.hidden=false;error.textContent='Seznam se nepodařilo načíst: '+err.message+' Zkontroluj, zda je na GitHubu vedle index.html také soubor cviceni.json. Stránku otevírej přes GitHub Pages, nikoliv jako soubor z počítače.'}
+}
+$('refresh').addEventListener('click',load);load();
+</script>
+</body>
+</html>
