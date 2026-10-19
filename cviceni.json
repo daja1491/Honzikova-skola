@@ -1,0 +1,37 @@
+{
+  "predmety": [
+    {
+      "nazev": "Český jazyk",
+      "ikona": "📚",
+      "popis": "Pravopis, mluvnice a další procvičování.",
+      "cviceni": [
+        {
+          "nazev": "Shoda podmětu s přísudkem – 20 vět",
+          "soubor": "honzikova_skola.html"
+        },
+        {
+          "nazev": "Shoda podmětu s přísudkem – 30 nových vět",
+          "soubor": "shoda-podmetu-30-vet.html"
+        }
+      ]
+    },
+    {
+      "nazev": "Matematika",
+      "ikona": "🔢",
+      "popis": "Rovnice, počítání a slovní úlohy.",
+      "cviceni": []
+    },
+    {
+      "nazev": "Angličtina",
+      "ikona": "🌍",
+      "popis": "Slovíčka a jednoduché věty.",
+      "cviceni": []
+    },
+    {
+      "nazev": "Přírodověda",
+      "ikona": "🌱",
+      "popis": "Příroda, rostliny a zvířata.",
+      "cviceni": []
+    }
+  ]
+}
